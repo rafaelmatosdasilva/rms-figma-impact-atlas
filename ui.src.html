@@ -52,76 +52,22 @@
    They need isolation:isolate so their z-index is evaluated against the SVG. */
 
 
+/* Search is the DS input (component 1:5): its Icon Left is the search icon and its Icon Right the clear button,
+   shown only once there is a value. The field itself (border, padding, gap, text) comes from .inputWrap. */
 .search-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
   width: 344px;
   flex-shrink: 0;
 }
-/* .actionbar identity (flex, gap, padding, height) comes from theme.css base */
-.actionbar-split {
-  justify-content: space-between; /* consumer layout: spread slot groups */
-}
-.last-scan-row {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-m);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.scan-age-text { font-size: var(--m-size); color: var(--text-muted); font-weight: var(--m-weight); white-space: nowrap; }
-/* Search icon — always visible on the left inside the field */
-.search-wrap svg.search-icon {
-  position: absolute;
-  left: var(--padding-s); /* DS input icon inset = padding/s */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;  /* DS Input icon = 16×16 (component 1:5) */
-  height: 16px;
-  color: var(--input-icon);
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  height: var(--button-min-height);
-  /* Left inset clears the absolutely-positioned search icon: its own padding/s offset
-     + the 16px DS icon box + gap/s. Composed from tokens rather than the old flat 28px
-     so it tracks the DS if any of the three change. */
-  padding: 0 var(--padding-s) 0 calc(var(--padding-s) + 16px + var(--gap-s));
-  background: var(--input-background);
-  /* input/border/default — NOT --border (dividerLine). The two are the same N700 in
-     light but one ramp step apart in dark (#454545 vs #303030), so a divider token
-     here reads correct in light and too dim in dark. */
-  border: var(--thickness) solid var(--input-border);
-  border-radius: var(--radius-full);
-  font-size: var(--m-size);
-  font-weight: var(--m-weight);
-  color: var(--text);
-  font-family: inherit;
-  outline: none;
-}
-.search-input::placeholder { color: var(--input-value-empty); }
-.search-input:focus { border-color: var(--input-border-focus); }
-.search-input.has-value { padding-right: 26px; }
-
 .search-clear {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--input-icon);
   cursor: pointer;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border-radius: 50%;
+  flex-shrink: 0;
 }
 .search-clear:hover { color: var(--text); }
 .search-input.has-value ~ .search-clear { display: flex; }
@@ -702,7 +648,9 @@ body.browser-empty .right-panel {
   position: relative;
   z-index: 7;
 }
-/* #sb-main-row geometry comes from the .statusBar base class in theme.css */
+/* #sb-main-row geometry comes from the .statusBar base class in theme.css; its items sit in two DS slot content
+   groups (.statusBar-content, gap/m), the bar's own gap/xl between them. The first group takes the free width. */
+.sb-main-group { flex: 1; }
 #sb-main-row .badge {
   align-self: center;
 }
@@ -1027,10 +975,10 @@ body.browser-empty .right-panel {
       <span class="scan-status-label" id="scan-status-level">Local Scan</span>
     </div>
 
-    <div class="search-wrap" id="search-wrap">
-      <svg class="search-icon" width="16" height="16"><use href="#icon-search"/></svg>
-      <input class="search-input" id="search-input" type="text" placeholder="Search…" autocomplete="off"/>
-      <button class="search-clear" id="search-clear" tabindex="-1" aria-label="Clear search">
+    <div class="inputWrap search-wrap" id="search-wrap">
+      <svg class="icon-left" width="16" height="16"><use href="#icon-search"/></svg>
+      <input class="inputField search-input" id="search-input" type="text" placeholder="Search…" autocomplete="off"/>
+      <button class="icon-right search-clear" id="search-clear" tabindex="-1" aria-label="Clear search">
         <svg width="16" height="16"><use href="#icon-clear"/></svg>
       </button>
     </div>
@@ -1096,6 +1044,7 @@ body.browser-empty .right-panel {
         <!-- Status bar — ancestors breadcrumb (top row) + name/impact/toggle (main row) -->
         <div id="status-bar" class="hidden">
           <div id="sb-main-row" class="statusBar">
+            <div class="statusBar-content sb-main-group">
             <div class="statusBar-title">
               <div class="sb-type-icon" id="sb-type-icon"></div>
               <span id="sb-name"></span>
@@ -1106,7 +1055,8 @@ body.browser-empty .right-panel {
               <svg width="16" height="16"><use href="#icon-focus"/></svg>
             </button>
             <span id="sb-lib-badge" class="tooltipButton sb-lib-badge hidden" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>
-            <div style="flex:1;"></div>
+            </div>
+            <div class="statusBar-content">
             <button id="sb-export-btn" class="buttonQuaternary" data-tip="Copy report to clipboard">
               <svg width="16" height="16"><use href="#icon-copy"/></svg>
             </button>
@@ -1118,6 +1068,7 @@ body.browser-empty .right-panel {
               <button id="btn-view-list" title="List view">
                 <svg width="16" height="16"><use href="#icon-list"/></svg>
               </button>
+            </div>
             </div>
           </div>
         </div>
