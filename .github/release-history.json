@@ -1,0 +1,19 @@
+{
+  "_note": "The tags and releases this plugin had in rms-ds-figma-plugins, re-created here by the bootstrap-releases workflow (once each).",
+  "tags": [
+    {
+      "tag": "v5",
+      "commit": "518f4a1b00e0225ae750e344ea24d2d8f454e8af",
+      "message": "impact-atlas v5"
+    },
+    {
+      "tag": "v6",
+      "commit": "a451a2428d0fbf3b14654a1dcfc130cd2fa9d9ac",
+      "message": "impact-atlas v6",
+      "release": {
+        "title": "Impact Atlas v6",
+        "notes": "- New feature: Place all components affected by a token on the canvas for easier review.\n- Added a library icon to distinguish external items from local ones at a glance.\n- Fixed an issue where local tokens were incorrectly labelled as external.\n- Improved reopening speed and refined search."
+      }
+    }
+  ]
+}
