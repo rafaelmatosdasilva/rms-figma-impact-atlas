@@ -217,7 +217,7 @@ describe('impact-atlas UI — components tab', () => {
     expect(ui.$('#comp-list').textContent).toContain('buttonPrimary');
   });
 
-  it('marks a library component as one it cannot focus', () => {
+  it('shows a library component as the DS node: its icon and name, no buttons', () => {
     ui = loadUI(UI);
     ui.receive(initData({
       browserComponents: [{
@@ -234,9 +234,9 @@ describe('impact-atlas UI — components tab', () => {
     });
     ui.click('#btn-mode-comps');
 
-    // No canvas focus for a master that lives in another file — a library mark instead.
+    // The DS node has its icon and its name only: no focus button and no library mark on the row.
     const row = ui.$$('#comp-list .comp-item').find((el) => el.textContent.includes('libraryButton'));
-    expect(row.querySelector('.lib-badge')).toBeTruthy();
+    expect(row.querySelector('.lib-badge')).toBeNull();
     expect(row.querySelector('.comp-item-focus-btn')).toBeNull();
   });
 });
@@ -309,7 +309,7 @@ describe('impact-atlas UI — what a search survives', () => {
 
     // "button/background" does not match "buttonPrimary", so it could not be
     // selected in the list unless the query is dropped first.
-    ui.click(ui.$('#gcol-2 .node-drill-btn[data-drill-id="v-high"]'));
+    ui.$('#gcol-2 .graph-node[data-drill-id="v-high"]').dispatchEvent(new ui.window.MouseEvent('dblclick', { bubbles: true }));
 
     expect(ui.$('#search-input').value).toBe('');
     const selected = ui.$('#var-list .var-item.node-selected');
@@ -324,7 +324,7 @@ describe('impact-atlas UI — what a search survives', () => {
     ui.click(ui.$$('#var-list .var-item').find((el) => el.textContent.includes('button/background')));
     ui.receive(chainResult());
 
-    ui.click(ui.$('#gcol-3 .node-goto-btn[data-goto-node-id="comp-1"]'));
+    ui.$('#gcol-3 .graph-node.comp[data-node-id="comp-1"]').dispatchEvent(new ui.window.MouseEvent('dblclick', { bubbles: true }));
 
     expect(ui.$('#search-input').value).toBe('');
     const selected = ui.$('#comp-list .comp-item.node-selected');
@@ -377,12 +377,12 @@ describe('impact-atlas UI — connectors survive a drill', () => {
     });
   }
 
-  /** Component detail → click the chevron on its bound token. */
+  /** Component detail → double-click its bound token's node (the DS node has no arrow). */
   function drillToBoundToken(ui) {
     afterDeeperScan(ui);
     ui.click('#btn-mode-comps');
     ui.click(ui.$$('#comp-list .comp-item').find((el) => el.textContent.includes('mainMenuBackground')));
-    ui.click(ui.$('#gcol-2 .node-drill-btn[data-drill-id="r-1"]'));
+    ui.$('#gcol-2 .graph-node[data-drill-id="r-1"]').dispatchEvent(new ui.window.MouseEvent('dblclick', { bubbles: true }));
   }
 
   it('draws them after drilling into a bound token', async () => {
@@ -391,7 +391,7 @@ describe('impact-atlas UI — connectors survive a drill', () => {
     ui.receive(initData());
     ui.click('#btn-mode-comps');
     ui.click(ui.$$('#comp-list .comp-item').find((el) => el.textContent.includes('buttonPrimary')));
-    ui.click(ui.$('#gcol-2 .node-drill-btn[data-drill-id="v-high"]'));
+    ui.$('#gcol-2 .graph-node[data-drill-id="v-high"]').dispatchEvent(new ui.window.MouseEvent('dblclick', { bubbles: true }));
     ui.receive(chainResult());
     await new Promise((r) => setTimeout(r, 120)); // edges are drawn on a rAF
 
@@ -422,18 +422,16 @@ describe('impact-atlas UI — connectors survive a drill', () => {
 });
 
 describe('impact-atlas UI — external library marker', () => {
-  it('marks an external token with the shared library icon, not the word', () => {
+  it('shows an external token as the DS node: no badge, no word', () => {
     ui = loadUI(UI);
     ui.receive(initData());
     const external = chainResult();
     external.chain.descendants = [{ ...chainNode('v-ext', 'remote/accent'), isExternal: true }];
     ui.receive(external);
 
-    // Every other external indicator is a tooltipButton carrying #icon-library;
-    // this one used to be the odd one out, rendering the literal text "Library".
-    const badge = ui.$('#gcol-2 .lib-badge');
-    expect(badge.className).toContain('tooltipButton');
-    expect(badge.querySelector('use').getAttribute('href')).toBe('#icon-library');
+    // The DS node has its icon and its name only.
+    expect(ui.$('#gcol-2 .lib-badge')).toBeNull();
+    expect(ui.$('#gcol-2 .graph-node.node-external')).toBeTruthy();
     expect(ui.$('#gcol-2').textContent).not.toContain('Library');
   });
 });

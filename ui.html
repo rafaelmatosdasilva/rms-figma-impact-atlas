@@ -154,7 +154,6 @@
 /* External-library marker on a graph node. Same icon + .tooltipButton appearance
    as every other external indicator (list rows, status bar) — it used to be the
    only one rendering the word "Library", which read as a different concept. */
-.node-lib-badge { margin-top: var(--gap-xs); }
 
 /* .node-disabled — defined in theme.css */
 
@@ -430,119 +429,10 @@ body.browser-empty .right-panel {
   direction: rtl;
   text-align: left;
 }
-/* focus button on comp nodes (visible on hover) */
-/* ── Node action buttons (focus / drill / goto) — shared base ── */
-.node-focus-btn,
-.node-goto-btn,
-.node-drill-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 6px;
-  /* use buttonTertiary sizing */
-  width: var(--button-min-height);
-  height: var(--button-min-height);
-  padding: 0;
-  border: var(--thickness) solid var(--buttonTertiary-background);
-  border-radius: var(--radius-full);
-  background: var(--buttonTertiary-background);
-  color: var(--buttonTertiary-text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.1s, background 0.15s, color 0.15s;
-  pointer-events: none;
-  flex-shrink: 0;
-}
-.node-focus-btn:hover,
-.node-goto-btn:hover,
-.node-drill-btn:hover {
-  background: var(--buttonTertiary-background-active);
-  color: var(--buttonTertiary-text-active);
-  border-color: transparent;
-}
-
-/* show on hover */
-.graph-node.comp:hover .node-focus-btn,
-.graph-node.comp:hover .node-goto-btn,
-.graph-node.desc:hover .node-drill-btn,
-.var-item:hover .var-item-chevron,
-.comp-item:hover .var-item-chevron { opacity: 1; pointer-events: auto; }
-
-/* focus + goto buttons on graph comp nodes — focus left, goto right */
-.graph-node.comp .node-focus-btn { right: 34px; }
-.graph-node.comp .node-goto-btn  { right: 6px; }
-
-/* The action buttons are position:absolute and only appear on hover, so they
-   reserve no flex space. Reserve the button zone ONLY on hover — otherwise every
-   resting row shows a large empty gap on the right (the buttons aren't there).
-   On hover a long name truncates before the buttons instead of sliding under them.
-   comp: focus(right 34 + 24w) → 58px; desc: drill(right 6 + 24w) → 30px. */
-.graph-node.comp:hover .node-body { padding-right: 62px; }
-.graph-node.desc:hover .node-body { padding-right: 34px; }
-
-/* focus button on browser comp-item rows — sits left of the chevron */
-.comp-item-focus-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 34px; /* 6px chevron pos + 24px chevron width + 4px gap */
-  width: var(--button-min-height); height: var(--button-min-height);
-  padding: 0;
-  border: var(--thickness) solid var(--buttonTertiary-background);
-  border-radius: var(--radius-full);
-  background: var(--buttonTertiary-background);
-  color: var(--buttonTertiary-text);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0;
-  transition: opacity 0.1s, background 0.15s, color 0.15s;
-  pointer-events: none;
-  flex-shrink: 0;
-}
-.comp-item-focus-btn:hover {
-  background: var(--buttonTertiary-background-active);
-  color: var(--buttonTertiary-text-active);
-  border-color: transparent;
-}
-
-/* Explicitly target SVGs inside action buttons — prevents .node svg (theme.css)
-   from overriding icon color via direct targeting (direct beats inherited) */
-.node-focus-btn svg,
-.node-goto-btn svg,
-.node-drill-btn svg,
-.comp-item-focus-btn svg { color: var(--buttonTertiary-text); }
-
-.node-focus-btn:hover svg,
-.node-goto-btn:hover svg,
-.node-drill-btn:hover svg,
-.comp-item-focus-btn:hover svg { color: var(--buttonTertiary-text-active); }
-
-/* Library-component indicator: appearance comes from .tooltipButton in the base —
-   only its size and placement are app-specific. Shown for components whose master
-   lives in an external library, in the slot the Focus button uses for local ones. */
+/* The DS node (544:74211) has an icon, a title and its states, nothing else: no action buttons or badges on it.
+   Double-clicking a node does what its arrow used to (select it, or drill into it). */
+/* Library indicator in list rows: the DS buttonList's tooltipButton. */
 .lib-badge svg { width: 12px; height: 12px; }
-/* Hover-only, like the focus button it replaces. Absolute in the focus slot for
-   graph nodes and comp-item rows, so it never reserves space in the default state
-   and only appears (with its tooltip) when the row is hovered. */
-.graph-node.comp .lib-badge,
-.comp-item .lib-badge,
-.var-item .lib-badge {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 34px;
-  width: var(--button-min-height);
-  height: var(--button-min-height);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.1s;
-}
-.graph-node.comp:hover .lib-badge,
-.comp-item:hover .lib-badge,
-.var-item:hover .lib-badge { opacity: 1; pointer-events: auto; }
 /* In a list row it is the DS buttonList's tooltipButton (Show Tooltip): right after the title, shown at rest. */
 .buttonList .lib-badge { display: flex; flex-shrink: 0; }
 /* Component names read left-to-right, so truncate the END (keep the start),
@@ -1619,16 +1509,9 @@ function renderBrowser() {
 function renderVarRow(v) {
   var isRemote   = !!v.isRemote;
   var isSelected = isRemote ? v.id === _selectedRemoteId : v.id === _selectedId;
-  // External-library tokens get the same library indicator + tooltip as external
-  // components, so their origin is clear at a glance.
-  var libBadge = isRemote
-    ? '<span class="tooltipButton lib-badge" data-tip="From an external library."><svg width="12" height="12"><use href="#icon-library"/></svg></span>'
-    : '';
   return '<button class="node var-item' + (isSelected ? ' node-selected' : '') + '" data-id="' + esc(v.id) + '" data-remote="' + (isRemote ? '1' : '0') + '">' +
     '<div class="var-type-icon">' + varTypeIconHtml(v.resolvedType, 16) + '</div>' +
     '<span class="var-name">' + esc(nodeLabelName(v.name)) + '</span>' +
-    libBadge +
-    '<span class="node-goto-btn var-item-chevron"><svg width="16" height="16"><use href="#icon-arrow-right"/></svg></span>' +
   '</button>';
 }
 
@@ -1670,10 +1553,9 @@ function onVarClick(e) {
   // Support both direct call (currentTarget = item) and delegated call (item passed as arg)
   var item     = (e instanceof Event) ? e.target.closest('.var-item') : e;
   if (!item) return;
-  if (e instanceof Event && e.target.closest('.node-drill-btn, .node-focus-btn')) return;
-  // The chevron always SELECTS — never toggles — so it can't deselect an
-  // already-selected row the way the row body does.
-  var viaChevron = (e instanceof Event) && !!e.target.closest('.node-goto-btn, .var-item-chevron');
+  // A double-click always SELECTS — never toggles — so it can't deselect an
+  // already-selected row the way a single click does.
+  var viaChevron = (e instanceof Event) && e.type === 'dblclick';
   var id       = item.getAttribute('data-id');
   var isRemote = item.getAttribute('data-remote') === '1';
   if (!id) return;
@@ -1945,22 +1827,12 @@ function makeVarNode(v, cssClass, dataId) {
   // External vars are not in the local list — don't set data-id or drill button
   var idAttr   = (dataId && !isExternal) ? ' data-id="' + esc(dataId) + '"' : '';
   var externalAttr = isExternal ? ' data-external="1"' : '';
-  var drillBtn = (cssClass === 'desc' && !isExternal)
-    ? '<button class="node-drill-btn" data-drill-id="' + esc(dataId) + '" data-tip="Select in list">' +
-        '<svg width="16" height="16"><use href="#icon-arrow-right"/></svg>' +
-      '</button>'
-    : '';
-  var externalBadge = isExternal
-    ? '<span class="tooltipButton lib-badge node-lib-badge" data-tip="From external library — run Full scan to explore">' +
-        '<svg width="12" height="12"><use href="#icon-library"/></svg></span>'
-    : '';
-  return '<div class="node graph-node ' + cssClass + (isExternal ? ' node-external' : '') + '"' + idAttr + externalAttr + '>' +
+  var drillAttr = (cssClass === 'desc' && !isExternal) ? ' data-drill-id="' + esc(dataId) + '"' : '';
+  return '<div class="node graph-node ' + cssClass + (isExternal ? ' node-external' : '') + '"' + idAttr + externalAttr + drillAttr + '>' +
     '<div class="node-type-icon">' + varTypeIconHtml(v.resolvedType, 16) + '</div>' +
     '<div class="node-body">' +
       '<div class="node-name" title="' + esc(v.name) + '">' + esc(nodeLabelName(v.name)) + '</div>' +
-      externalBadge +
     '</div>' +
-    drillBtn +
   '</div>';
 }
 
@@ -1975,9 +1847,7 @@ var LIB_BADGE_HTML = '<span class="tooltipButton lib-badge" data-tip="From an ex
 function markNodeUnreachable(nodeId) {
   if (!nodeId || _unreachableNodes.has(nodeId)) return;
   _unreachableNodes.add(nodeId);
-  var sel = '.node-focus-btn[data-node-id="' + nodeId + '"], ' +
-            '.buttonList-action[data-node-id="' + nodeId + '"], ' +
-            '.comp-item-focus-btn[data-node-id="' + nodeId + '"]';
+  var sel = '.buttonList-action[data-node-id="' + nodeId + '"]';
   var btns = document.querySelectorAll(sel);
   for (var i = 0; i < btns.length; i++) {
     var tmp = document.createElement('template');
@@ -1988,22 +1858,11 @@ function markNodeUnreachable(nodeId) {
 
 function makeCompNodeHtml(c) {
   var count = c.boundCount || 1;
-  var gotoBtn =
-    '<button class="node-goto-btn" data-goto-node-id="' + esc(c.nodeId) + '" data-tip="Select component">' +
-      '<svg width="16" height="16"><use href="#icon-arrow-right"/></svg>' +
-    '</button>';
-  var focusBtn = (c.pageId && !_unreachableNodes.has(c.nodeId))
-    ? '<button class="node-focus-btn" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas">' +
-        '<svg width="16" height="16"><use href="#icon-focus"/></svg>' +
-      '</button>'
-    : '<span class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>';
   return '<div class="node graph-node comp" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '">' +
     '<div class="node-type-icon">' + nodeTypeIcon(c.nodeType) + '</div>' +
     '<div class="node-body">' +
       '<div class="node-name" title="' + esc(c.nodeName) + '">' + esc(nodeLabelName(c.nodeName)) + '</div>' +
     '</div>' +
-    focusBtn +
-    gotoBtn +
   '</div>';
 }
 
@@ -2953,16 +2812,11 @@ function makeCompItem(c) {
   var classes = 'node comp-item';
   if (isSelected) classes += ' node-selected';
   var pageIdAttr = c.pageId ? esc(c.pageId) : '';
-  var focusBtn = (c.nodeId && c.pageId && !_unreachableNodes.has(c.nodeId))
-    ? '<span class="comp-item-focus-btn" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + pageIdAttr + '" data-tip="Focus on canvas"><svg width="16" height="16"><use href="#icon-focus"/></svg></span>'
-    : '<span class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>';
   return '<button class="' + classes +
     '" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + pageIdAttr + '">' +
     '<div class="node-type-icon">' + nodeTypeIcon(c.nodeType) + '</div>' +
     libTag +
     '<span class="var-name">' + esc(c.nodeName) + '</span>' +
-    focusBtn +
-    '<span class="node-goto-btn var-item-chevron"><svg width="16" height="16"><use href="#icon-arrow-right"/></svg></span>' +
     '</button>';
 }
 
@@ -3035,18 +2889,9 @@ function renderComponentBrowser() {
 }
 
 function onCompItemClick(e) {
-  if (e instanceof Event) {
-    var focusTarget = e.target.closest('.comp-item-focus-btn, .node-focus-btn');
-    if (focusTarget) {
-      var fnId = focusTarget.getAttribute('data-node-id');
-      var fnPage = focusTarget.getAttribute('data-page-id');
-      if (fnId) parent.postMessage({ pluginMessage: { type: 'focus-node', nodeId: fnId, pageId: fnPage } }, '*');
-      return;
-    }
-  }
-  // The chevron always SELECTS its node — never toggles — so clicking it can't
-  // accidentally deselect an already-selected row the way the row body does.
-  var viaChevron = (e instanceof Event) && !!e.target.closest('.node-goto-btn, .var-item-chevron');
+  // A double-click always SELECTS its node — never toggles — so it can't
+  // accidentally deselect an already-selected row the way a single click does.
+  var viaChevron = (e instanceof Event) && e.type === 'dblclick';
 
   var btn    = (e instanceof Event) ? e.target.closest('.comp-item') : e;
   if (!btn) return;
@@ -4109,6 +3954,15 @@ document.getElementById('btn-mode-comps').addEventListener('click',  function ()
 // ── Delegated click handlers (one listener per container, never re-attached) ──
 document.getElementById('var-list').addEventListener('click', onVarClick);
 document.getElementById('comp-list').addEventListener('click', onCompItemClick);
+// The DS node has no action buttons: a double-click does what its arrow did.
+document.getElementById('var-list').addEventListener('dblclick', onVarClick);
+document.getElementById('comp-list').addEventListener('dblclick', onCompItemClick);
+document.getElementById('graph-body').addEventListener('dblclick', function (e) {
+  var drill = e.target.closest('.graph-node[data-drill-id]');
+  if (drill) { var drillId = drill.getAttribute('data-drill-id'); if (_browserMode === 'components') drillToTokenMode(drillId); else drillIntoVar(drillId); return; }
+  var comp = e.target.closest('.graph-node.comp[data-node-id]');
+  if (comp) navigateToComponent(comp.getAttribute('data-node-id'));
+});
 document.getElementById('list-alias-body').addEventListener('click', function (e) {
   var row = e.target.closest('.buttonList[data-id]');
   if (row) onListAliasClick({ currentTarget: row, target: e.target });
@@ -4188,32 +4042,6 @@ function drillIntoVar(id) {
 
 // Unified delegated click handler on graph body
 document.getElementById('graph-body').addEventListener('click', function (e) {
-  // Drill button on alias nodes → select in list + re-analyze
-  var drillBtn = e.target.closest('.node-drill-btn');
-  if (drillBtn) {
-    var drillId = drillBtn.getAttribute('data-drill-id');
-    if (_browserMode === 'components') drillToTokenMode(drillId);
-    else drillIntoVar(drillId);
-    return;
-  }
-
-  // Focus button on comp nodes → navigate Figma, don't change selection
-  var gotoBtn = e.target.closest('.node-goto-btn');
-  if (gotoBtn) {
-    e.stopPropagation();
-    var gotoNodeId = gotoBtn.getAttribute('data-goto-node-id');
-    if (gotoNodeId) navigateToComponent(gotoNodeId);
-    return;
-  }
-
-  var focusBtn = e.target.closest('.node-focus-btn');
-  if (focusBtn) {
-    var nodeId = focusBtn.getAttribute('data-node-id');
-    var pageId = focusBtn.getAttribute('data-page-id');
-    if (nodeId) parent.postMessage({ pluginMessage: { type: 'focus-node', nodeId: nodeId, pageId: pageId } }, '*');
-    return;
-  }
-
   // Selection — works for ALL node types (anc, sel, desc, comp)
   var node = e.target.closest('.graph-node:not(.more)');
   if (node) {
