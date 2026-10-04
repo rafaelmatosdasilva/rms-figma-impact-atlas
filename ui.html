@@ -543,10 +543,8 @@ body.browser-empty .right-panel {
 .graph-node.comp:hover .lib-badge,
 .comp-item:hover .lib-badge,
 .var-item:hover .lib-badge { opacity: 1; pointer-events: auto; }
-/* List rows reveal it on hover in the buttonList action slot (no default space). */
-.buttonList .lib-badge { margin-left: auto; display: none; }
-.buttonList:not(.selected):hover .lib-badge,
-.buttonList:not(.selected).hovered .lib-badge { display: flex; }
+/* In a list row it is the DS buttonList's tooltipButton (Show Tooltip): right after the title, shown at rest. */
+.buttonList .lib-badge { display: flex; flex-shrink: 0; }
 /* Component names read left-to-right, so truncate the END (keep the start),
    unlike token paths where the meaningful part is the tail (rtl). */
 .graph-node.comp .node-name { direction: ltr; }
@@ -587,13 +585,16 @@ body.browser-empty .right-panel {
 }
 
 .lrow-name {
-  flex: 1;
+  flex: 0 1 auto;   /* DS Text frame hugs: the title, then its tooltipButton right beside it */
+  margin-right: auto;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.lrow-name:has(+ .lib-badge) { margin-right: 0; }
+.lrow-name + .lib-badge { margin-right: auto; }
 
 /* ─── External var detail (library) ────────────────────────────────────── */
 
