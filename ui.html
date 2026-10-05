@@ -42,8 +42,8 @@
 .left-panel {
   flex: 1;
   min-width: 120px;
-  border-right: var(--thickness) solid var(--panel-border);  /* panel/border/color (N700 both modes) */
-  background: var(--bg);
+  border-right: var(--general-thickness) solid var(--panel-border);  /* panel/border/color (N700 both modes) */
+  background: var(--semantic-surface-elevationMedium);
   position: relative;
   z-index: 5;
   display: flex;
@@ -72,7 +72,7 @@
   padding: 0;
   flex-shrink: 0;
 }
-.search-clear:hover { color: var(--text); }
+.search-clear:hover { color: var(--semantic-content-primary); }
 .search-input.has-value ~ .search-clear { display: flex; }
 
 /* Extends base .scroll-area — adds layout-specific overrides only */
@@ -99,7 +99,7 @@
 #var-list.has-list-selection .var-item:not(.node-selected),
 #comp-list.has-list-selection .comp-item:not(.node-selected) {
   background: transparent;
-  border-color: var(--border);
+  border-color: var(--dividerLine-border);
   color: var(--node-label-idle); /* DS idle state (node/label/idle) — the DS retired node/label/unselected on 2026-07-22 */
 }
 
@@ -109,11 +109,11 @@
   top: 24px; /* sit flush below its own section divider (DS compact 24px height) — no gap for content to bleed through */
   bottom: 0;
   z-index: 8; /* above the sticky dividers (z-index 7) so the selection ring is never clipped by them */
-  /* The element is the SQUARE slot backing (--bg, border-radius 0) so nothing scrolling behind the
-     pinned node shows through the pill's rounded corners. The visible rounded --surface card + ring
+  /* The element is the SQUARE slot backing (--semantic-surface-elevationMedium, border-radius 0) so nothing scrolling behind the
+     pinned node shows through the pill's rounded corners. The visible rounded selected-node card + ring
      is redrawn on ::before (below the label). A child can't paint behind its parent's own fill, so
      the fill must live on the element and the card on the pseudo. */
-  background: var(--bg);
+  background: var(--semantic-surface-elevationMedium);
   border-radius: 0;
   border-color: transparent;
   transition: top 0.18s ease;
@@ -122,11 +122,11 @@
 #comp-list .comp-item.node-selected::before {
   content: '';
   position: absolute;
-  inset: calc(-1 * var(--thickness)); /* reach the border-box outer edge so the ring aligns */
-  background: var(--surface);
-  border: var(--thickness) solid var(--node-border-selected);
-  border-radius: var(--radius-full);
-  z-index: -1; /* above the element's --bg fill, below the label */
+  inset: calc(-1 * var(--general-thickness)); /* reach the border-box outer edge so the ring aligns */
+  background: var(--node-background-selected); /* node/background/selected, as every selected node */
+  border: var(--general-thickness) solid var(--node-border-selected);
+  border-radius: var(--radii-button);
+  z-index: -1; /* above the element's --semantic-surface-elevationMedium fill, below the label */
   pointer-events: none;
 }
 #var-list .var-item.node-selected:hover::before,
@@ -166,7 +166,7 @@
 .var-name {
   flex: 1;
   min-width: 0;
-  font-size: var(--m-size);
+  font-size: var(--typography-m-font-size);
   color: inherit; /* node label color comes from the .node state classes (node/label/* tokens) */
   line-height: 1.4;
   overflow: hidden;
@@ -217,7 +217,7 @@ body.browser-empty .right-panel {
 
 /* #right-placeholder uses .empty-state base class */
 #right-placeholder {
-  background: var(--bg-detail);
+  background: var(--semantic-surface-elevationLow);
 }
 
 #right-detail {
@@ -225,7 +225,7 @@ body.browser-empty .right-panel {
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  background: var(--bg-detail); /* semantic/background/color N1000 */
+  background: var(--semantic-surface-elevationLow); /* semantic/background/color N1000 */
 }
 
 /* list scroll-area context: full-bleed sticky headers at the DS dividerSection
@@ -274,7 +274,7 @@ body.browser-empty .right-panel {
   position: relative;
   isolation: isolate;
   z-index: 7;
-  background: var(--bg);
+  background: var(--semantic-surface-elevationMedium);
 }
 
 /* segmented-control tab-empty state moved to theme.css (base-first) */
@@ -301,7 +301,7 @@ body.browser-empty .right-panel {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  background: var(--bg-detail);
+  background: var(--semantic-surface-elevationLow);
 }
 
 /* Full-width header row — one dividerSection per column, seamless background.
@@ -317,10 +317,10 @@ body.browser-empty .right-panel {
      top padding/l — so the connector edge-lines and nodes behind the header never show through
      the top strip. (Was transparent, relying on each divider's own fill, which left the padding
      strip and empty columns see-through.) */
-  background: var(--bg-detail);
+  background: var(--semantic-surface-elevationLow);
   padding-top: var(--padding-l);
 }
-#right-detail .dividerSection { background: var(--bg-detail); } /* same surface for sticky bg */
+#right-detail .dividerSection { background: var(--semantic-surface-elevationLow); } /* same surface for sticky bg */
 #graph-col-headers .dividerSection {
   flex: 1;
   position: static; /* wrapper is the sticky element */
@@ -394,13 +394,13 @@ body.browser-empty .right-panel {
   justify-content: center;
   border-style: dashed;
   color: var(--text-muted);
-  font-size: var(--s-size);
+  font-size: var(--typography-s-font-size);
   background: transparent;
-  border-color: var(--border);
+  border-color: var(--dividerLine-border);
 }
 .graph-node.more:hover {
   border-color: var(--text-muted);
-  color: var(--text);
+  color: var(--semantic-content-primary);
   background: var(--bg-secondary);
 }
 
@@ -420,7 +420,7 @@ body.browser-empty .right-panel {
   flex: 1;        /* take the row's free width... */
   min-width: 0;   /* ...and be allowed to shrink below content width, so a long
                      name truncates instead of overflowing into the chevron */
-  font-size: var(--m-size);
+  font-size: var(--typography-m-font-size);
   color: inherit; /* node label color comes from the .node state classes (node/label/* tokens) */
   line-height: 1.4;
   overflow: hidden;
@@ -450,7 +450,7 @@ body.browser-empty .right-panel {
   color: var(--text-muted);
   padding: var(--padding-xl) var(--padding-m);
   text-align: center;
-  font-size: var(--s-size);
+  font-size: var(--typography-s-font-size);
   opacity: 0.55;
   width: 100%;
 }
@@ -494,9 +494,9 @@ body.browser-empty .right-panel {
 .detail-var-name {
   flex: 1;
   min-width: 0;
-  font-size: var(--m-size);
-  font-weight: var(--m-weight);
-  color: var(--text);
+  font-size: var(--typography-m-font-size);
+  font-weight: var(--typography-m-font-weight);
+  color: var(--semantic-content-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -517,14 +517,14 @@ body.browser-empty .right-panel {
 .ref-var-name {
   flex: 1;
   min-width: 0;
-  font-size: var(--m-size);
-  color: var(--text);
+  font-size: var(--typography-m-font-size);
+  color: var(--semantic-content-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .ref-coll-tag {
-  font-size: var(--s-size);
+  font-size: var(--typography-s-font-size);
   color: var(--text-muted);
   flex-shrink: 0;
 }
@@ -537,7 +537,7 @@ body.browser-empty .right-panel {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  background: var(--bg-detail);
+  background: var(--semantic-surface-elevationLow);
   order: -1;
   position: relative;
   z-index: 7;
@@ -557,8 +557,8 @@ body.browser-empty .right-panel {
 }
 
 #sb-name {
-  font-size: var(--l-size);
-  font-weight: var(--m-weight);
+  font-size: var(--typography-l-font-size);
+  font-weight: var(--typography-m-font-weight);
   color: var(--statusbar-text);
   white-space: nowrap;
   overflow: hidden;
@@ -582,12 +582,12 @@ body.browser-empty .right-panel {
 .comp-item { width: 100%; margin-bottom: var(--gap-m); }
 .comp-token-count {
   flex-shrink: 0;
-  font-size: var(--s-size);
-  font-weight: var(--m-weight);
+  font-size: var(--typography-s-font-size);
+  font-weight: var(--typography-m-font-weight);
   color: var(--text-muted);
   background: var(--bg-secondary);
-  border: var(--thickness) solid var(--border);
-  border-radius: var(--radius-full);
+  border: var(--general-thickness) solid var(--dividerLine-border);
+  border-radius: var(--radii-button);
   padding: var(--padding-xxs) var(--padding-s);
 
   min-width: 18px;
@@ -601,8 +601,8 @@ body.browser-empty .right-panel {
 .comp-library-tag {
   flex-shrink: 0;
   margin-right: var(--gap-s);
-  font-size: var(--s-size);
-  font-weight: var(--m-weight);
+  font-size: var(--typography-s-font-size);
+  font-weight: var(--typography-m-font-weight);
   color: var(--text-muted);
   opacity: 0.55;
 }
@@ -625,8 +625,8 @@ body.browser-empty .right-panel {
 /* ─── Canvas scan ───────────────────────────────────────────────────────── */
 #canvas-scan-btn { flex-shrink: 0; display: flex; align-items: center; gap: var(--gap-m); }
 #canvas-scan-btn.scanning { opacity: 0.6; pointer-events: none; }
-.scan-status-label { font-size: var(--m-size); color: var(--text-muted); white-space: nowrap; font-weight: var(--m-weight); }
-.scan-status-change { height: var(--button-min-height); padding: 0 var(--padding-s); font-size: var(--m-size); flex-shrink: 0; }
+.scan-status-label { font-size: var(--typography-m-font-size); color: var(--text-muted); white-space: nowrap; font-weight: var(--typography-m-font-weight); }
+.scan-status-change { height: var(--button-min-height); padding: 0 var(--padding-s); font-size: var(--typography-m-font-size); flex-shrink: 0; }
 .scan-status-change.icon-only { padding: 0 var(--padding-xs); display: inline-flex; align-items: center; justify-content: center; }
 
 #canvas-scan-bar {
@@ -634,18 +634,18 @@ body.browser-empty .right-panel {
   display: flex;
   align-items: center;
   gap: var(--gap-m);
-  font-size: var(--s-size);
+  font-size: var(--typography-s-font-size);
   color: var(--text-muted);
-  border-bottom: var(--thickness) solid var(--border);  /* dividerLine (N700 both modes) */
+  border-bottom: var(--general-thickness) solid var(--dividerLine-border);  /* dividerLine (N700 both modes) */
   flex-shrink: 0;
 }
-#canvas-scan-bar .spinner { width: 14px; height: 14px; border-width: var(--thickness); flex-shrink: 0; }
+#canvas-scan-bar .spinner { width: 14px; height: 14px; border-width: var(--general-thickness); flex-shrink: 0; }
 
 /* canvas usage count on var-items */
 .var-canvas-count {
   flex-shrink: 0;
-  font-size: var(--m-size);
-  font-weight: var(--m-weight);
+  font-size: var(--typography-m-font-size);
+  font-weight: var(--typography-m-font-weight);
   color: var(--text-muted);
   opacity: 0.7;
   white-space: nowrap;
@@ -667,7 +667,7 @@ body.browser-empty .right-panel {
 .depth-options {
   /* Single source for the label's line box — the circle column and the connector
      both derive their vertical geometry from it. */
-  --depth-label-lh: calc(var(--m-size) * 1.3);
+  --depth-label-lh: calc(var(--typography-m-font-size) * 1.3);
   /* Ring + connector share one stroke weight so they read as a single track.
      Deliberately 2px, not general/thickness (1.5px) — at 16px the thinner ring
      disappears next to the connector. Local to this control by design. */
@@ -835,7 +835,7 @@ body.browser-empty .right-panel {
 }
 .depth-text-col .depth-label {
   display: block;
-  font-size: var(--m-size);
+  font-size: var(--typography-m-font-size);
   color: var(--radioButton-text);
   line-height: var(--depth-label-lh);
 }
@@ -845,7 +845,7 @@ body.browser-empty .right-panel {
 .depth-options[data-depth="1"] #depth-opt-3 .depth-label,
 .depth-options[data-depth="2"] #depth-opt-3 .depth-label { color: var(--radioButton-text-unselected); }
 .depth-text-col .depth-desc {
-  font-size: var(--m-size);
+  font-size: var(--typography-m-font-size);
   color: var(--radioButton-description);
   line-height: 1.4;
 }
@@ -903,7 +903,7 @@ body.browser-empty .right-panel {
 
       <div id="browser-body" style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;">
         <div id="browser-loading" class="loading-state hidden">
-          <span id="loading-text" style="font-size:var(--m-size)">Loading…</span>
+          <span id="loading-text" style="font-size:var(--typography-m-font-size)">Loading…</span>
         </div>
 
         <div id="all-list" class="scroll-area hidden"></div>
@@ -1015,7 +1015,7 @@ body.browser-empty .right-panel {
             <span class="detail-var-name" id="lib-detail-name"></span>
           </div>
         </div>
-        <div style="padding:var(--padding-xs) var(--padding-m) var(--padding-s);font-size:var(--s-size);color:var(--text-muted);flex-shrink:0;border-bottom:var(--thickness) solid var(--border);" id="lib-detail-coll"></div>
+        <div style="padding:var(--padding-xs) var(--padding-m) var(--padding-s);font-size:var(--typography-s-font-size);color:var(--text-muted);flex-shrink:0;border-bottom:var(--general-thickness) solid var(--dividerLine-border);" id="lib-detail-coll"></div>
         <div class="section-label">Referenced by</div>
         <div id="lib-ref-list" style="flex:1;overflow-y:auto;"></div>
         <div id="lib-ref-empty" class="empty-state hidden"><div class="empty-state-content"><p>No local variables alias this.</p></div></div>
@@ -2475,7 +2475,7 @@ function renderListComponents(components) {
     compBody.style.display = '';
     compBody.innerHTML = '<div class="lrow dimmed" style="justify-content:center;gap:8px;">' +
       '<div class="spinner" style="width:12px;height:12px;border-width:1.5px;"></div>' +
-      '<span style="font-size:var(--s-size);color:var(--text-muted)">Indexing components…</span>' +
+      '<span style="font-size:var(--typography-s-font-size);color:var(--text-muted)">Indexing components…</span>' +
     '</div>';
     return;
   }
