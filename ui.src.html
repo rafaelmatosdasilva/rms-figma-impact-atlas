@@ -661,13 +661,14 @@ body.browser-empty .right-panel {
 #deep-scan-modal .modal-card { width: 320px; gap: 0; }
 #deep-scan-modal h2 { margin-bottom: var(--padding-xl); }
 #deep-scan-modal .modal-footer { margin-top: var(--gap-l); }
+/* Scan depth: three DS radios (.radioButton) stacked as a stepper. The DS gives each its look by state, set in
+   paintDepthStates(): the chosen depth is Current (a ring around a dot), a depth it passes through or one not
+   available is Unselected (the dot alone), any other Default (the empty ring). What is this product's own is the
+   track between the steps: a connector that grows down to the chosen depth, dashed while chosen, solid once scanned. */
 .depth-options {
-  /* Single source for the label's line box — the circle column and the connector
-     both derive their vertical geometry from it. */
-  --depth-label-lh: calc(var(--typography-m-font-size) * 1.3);
-  /* Ring + connector share one stroke weight so they read as a single track.
-     Deliberately 2px, not general/thickness (1.5px) — at 16px the thinner ring
-     disappears next to the connector. Local to this control by design. */
+  /* The label's first line box: the 16px circle sits on it, and the connector starts below it. */
+  --depth-label-lh: var(--typography-m-line-height);
+  /* The connector is 2px so it reads beside the ring. Local to this control by design. */
   --depth-stroke: 2px;
   width: 100%;
   display: flex;
@@ -675,14 +676,13 @@ body.browser-empty .right-panel {
   gap: var(--gap-s);
   margin-bottom: -4px;
 }
-.depth-option {
+.depth-option.radioButton {
   display: flex;
-  align-items: flex-start;
-  gap: var(--gap-m);
+  align-items: flex-start;   /* the circle on the label's first line, not the middle of its description */
   position: relative;
-  padding-bottom: 0;
 }
-/* Vertical connector — accent colour always, hidden via scaleY(0), grows from top dot */
+.depth-option .radioButton-content { padding-bottom: var(--padding-l); }
+/* Vertical connector: accent always, hidden by scaleY(0), grows down from the step above */
 .depth-option:not(:last-child)::after {
   content: '';
   position: absolute;
@@ -715,141 +715,17 @@ body.browser-empty .right-panel {
 .depth-options[data-done="2"] #depth-opt-1::after,
 .depth-options[data-done="3"] #depth-opt-1::after { transform: scaleY(1); border-left-style: solid; }
 .depth-options[data-done="3"] #depth-opt-2::after { transform: scaleY(1); border-left-style: solid; }
-
-/* Pass-through circles: no outer ring, just the inner dot in accent */
-.depth-options[data-depth="2"] #depth-opt-1 .depth-circle,
-.depth-options[data-depth="3"] #depth-opt-1 .depth-circle,
-.depth-options[data-depth="3"] #depth-opt-2 .depth-circle {
-  border-color: transparent;
-  background: transparent;
-}
-.depth-options[data-depth="2"] #depth-opt-1 .depth-circle::after,
-.depth-options[data-depth="3"] #depth-opt-1 .depth-circle::after,
-.depth-options[data-depth="3"] #depth-opt-2 .depth-circle::after { background: var(--accent); transform: scale(1); }
-
-/* Dot scales in from 0.6 when a depth is selected */
-.depth-circle::after { transform: scale(0.6); }
-.depth-options[data-depth="1"] .depth-circle::after,
-.depth-options[data-depth="2"] .depth-circle::after,
-.depth-options[data-depth="3"] .depth-circle::after { transform: scale(1); }
-
-/* Endpoint circle: accent ring, no fill, accent dot — ID selector beats .done specificity */
-.depth-options[data-depth="1"] #depth-opt-1 .depth-circle,
-.depth-options[data-depth="2"] #depth-opt-2 .depth-circle,
-.depth-options[data-depth="3"] #depth-opt-3 .depth-circle { border-color: var(--accent); background: transparent; }
-.depth-options[data-depth="1"] #depth-opt-1 .depth-circle::after,
-.depth-options[data-depth="2"] #depth-opt-2 .depth-radio-input:checked + .depth-circle::after,
-.depth-options[data-depth="3"] #depth-opt-3 .depth-circle::after { background: var(--accent); }
-
-.depth-circle-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Match the label's first line box and centre the 16px circle inside it, so the
-     dot sits on the label's optical centre. A fixed top padding can't do this —
-     it drifts as soon as the type scale changes. */
-  height: var(--depth-label-lh);
-  justify-content: center;
-  flex-shrink: 0;
-}
-.depth-radio-input { display: none; }
-
-.depth-circle {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: var(--depth-stroke) solid var(--radioButton-border-unselected);
-  background: var(--radioButton-background);
-  flex-shrink: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 0.24s cubic-bezier(0.4, 0, 0.2, 1),
-              background   0.24s cubic-bezier(0.4, 0, 0.2, 1),
-              transform    0.24s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity      0.24s cubic-bezier(0.4, 0, 0.2, 1);
-  box-sizing: border-box;
-}
-.depth-circle::after {
-  content: '';
-  width: var(--dividerSection-height); height: var(--dividerSection-height);
-  border-radius: 50%;
-  background: transparent;
-  transition: background 0.24s cubic-bezier(0.4, 0, 0.2, 1),
-              transform  0.24s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Completed/done state */
-.depth-option.done .depth-circle {
-  border-color: var(--radioButton-border-selected);
-  background: var(--radioButton-border-selected);
-}
-/* Default checked state */
-.depth-radio-input:checked + .depth-circle { border-color: var(--radioButton-border-current); background: var(--radioButton-background-selected); }
-.depth-radio-input:checked + .depth-circle::after { background: var(--radioButton-border-current); }
-/* Done dot — declared after :checked so it overrides and contrasts the filled background */
-.depth-option.done .depth-circle::after { background: var(--radioButton-background); }
-
-/* ── No external libraries: disable Level 2 ── */
-/* Connectors only appear when Level 3 is selected (handled by data-depth="3" rules above) */
-.depth-option.unavailable { pointer-events: none; opacity: 0.4; }
-.depth-option.unavailable .depth-radio-input { pointer-events: none; }
-/* Unavailable circle: center dot only, no outer ring */
-.depth-option.unavailable .depth-circle {
-  border-color: transparent;
-  background: transparent;
-}
-.depth-option.unavailable .depth-circle::after { background: var(--radioButton-border); }
-.depth-desc-unavailable { display: none; }
-.depth-option.unavailable .depth-desc-default { display: none; }
-.depth-option.unavailable .depth-desc-unavailable { display: block; }
-
-/* ── "Would be un-done" feedback: selecting a lower level un-fills circles above it ── */
-.depth-options[data-depth="1"] #depth-opt-2.done .depth-circle,
-.depth-options[data-depth="1"] #depth-opt-3.done .depth-circle,
-.depth-options[data-depth="2"] #depth-opt-3.done .depth-circle {
-  background: transparent;
-  border-color: var(--radioButton-border);
-}
-.depth-options[data-depth="1"] #depth-opt-2.done .depth-circle::after,
-.depth-options[data-depth="1"] #depth-opt-3.done .depth-circle::after,
-.depth-options[data-depth="2"] #depth-opt-3.done .depth-circle::after { background: transparent; }
-
-/* Shrink done connectors above selection back to top dot */
+/* Shrink done connectors above the selection back to the step above */
 .depth-options[data-done="2"][data-depth="1"] #depth-opt-1::after,
 .depth-options[data-done="3"][data-depth="1"] #depth-opt-1::after { transform: scaleY(0); }
 .depth-options[data-done="3"][data-depth="2"] #depth-opt-2::after { transform: scaleY(0); }
-/* When Local is selected, also hide the Extended→Full connector */
 .depth-options[data-done="3"][data-depth="1"] #depth-opt-2::after { transform: scaleY(0); }
 
-.depth-option { cursor: pointer; }
-.depth-text-col {
-  flex: 1;
-  padding-bottom: var(--padding-l);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-xs);
-}
-.depth-text-col .depth-label {
-  display: block;
-  font-size: var(--typography-m-font-size);
-  color: var(--radioButton-text);
-  line-height: var(--depth-label-lh);
-}
-.depth-option.done .depth-label { color: var(--radioButton-text-selected); }
-/* "Would be un-done" options revert to unselected text styling */
-.depth-options[data-depth="1"] #depth-opt-2 .depth-label,
-.depth-options[data-depth="1"] #depth-opt-3 .depth-label,
-.depth-options[data-depth="2"] #depth-opt-3 .depth-label { color: var(--radioButton-text-unselected); }
-.depth-text-col .depth-desc {
-  font-size: var(--typography-m-font-size);
-  color: var(--radioButton-description);
-  line-height: 1.4;
-}
-/* Selected endpoint label: full contrast */
-.depth-options[data-depth="1"] #depth-opt-1 .depth-label,
-.depth-options[data-depth="2"] #depth-opt-2 .depth-label,
-.depth-options[data-depth="3"] #depth-opt-3 .depth-label { color: var(--radioButton-text-current); }
+/* ── No external libraries: Extended is not available ── */
+.depth-option.unavailable { pointer-events: none; opacity: 0.4; }
+.depth-desc-unavailable { display: none; }
+.depth-option.unavailable .depth-desc-default { display: none; }
+.depth-option.unavailable .depth-desc-unavailable { display: block; }
 
 </style>
 </head>
@@ -1042,42 +918,34 @@ body.browser-empty .right-panel {
     <div class="modal-slot">
     <div class="depth-options">
 
-      <!-- Level 1: always done — status only, not a radio -->
-      <div class="depth-option done" id="depth-opt-1">
-        <div class="depth-circle-col">
-          <input class="depth-radio-input" type="radio" name="scan-depth" id="depth-radio-1" value="1"/>
-          <label class="depth-circle" for="depth-radio-1"></label>
-        </div>
-        <label class="depth-text-col" for="depth-radio-1">
-          <span class="depth-label">Local</span>
-          <span class="depth-desc">Scans only the current file for tokens, components, and their relationships.</span>
-        </label>
-      </div>
+      <!-- One DS radio per depth; paintDepthStates() gives each its state. -->
+      <label class="radioButton depth-option" id="depth-opt-1">
+        <input class="radioButton-input" type="radio" name="scan-depth" id="depth-radio-1" value="1"/>
+        <span class="radioButton-circle"></span>
+        <span class="radioButton-content"><span class="radioButton-text">
+          <span class="radioButton-label">Local</span>
+          <span class="radioButton-description">Scans only the current file for tokens, components, and their relationships.</span>
+        </span></span>
+      </label>
 
-      <!-- Level 2: radio -->
-      <div class="depth-option" id="depth-opt-2">
-        <div class="depth-circle-col">
-          <input class="depth-radio-input" type="radio" name="scan-depth" id="depth-radio-2" value="2"/>
-          <label class="depth-circle" for="depth-radio-2"></label>
-        </div>
-        <label class="depth-text-col" for="depth-radio-2">
-          <span class="depth-label">Extended</span>
-          <span class="depth-desc depth-desc-default">Scans the current file and linked libraries for token and component relationships.</span>
-          <span class="depth-desc depth-desc-unavailable">No external libraries linked to this file.</span>
-        </label>
-      </div>
+      <label class="radioButton depth-option" id="depth-opt-2">
+        <input class="radioButton-input" type="radio" name="scan-depth" id="depth-radio-2" value="2"/>
+        <span class="radioButton-circle"></span>
+        <span class="radioButton-content"><span class="radioButton-text">
+          <span class="radioButton-label">Extended</span>
+          <span class="radioButton-description depth-desc-default">Scans the current file and linked libraries for token and component relationships.</span>
+          <span class="radioButton-description depth-desc-unavailable">No external libraries linked to this file.</span>
+        </span></span>
+      </label>
 
-      <!-- Level 3: radio -->
-      <div class="depth-option" id="depth-opt-3">
-        <div class="depth-circle-col">
-          <input class="depth-radio-input" type="radio" name="scan-depth" id="depth-radio-3" value="3"/>
-          <label class="depth-circle" for="depth-radio-3"></label>
-        </div>
-        <label class="depth-text-col" for="depth-radio-3">
-          <span class="depth-label">Full</span>
-          <span class="depth-desc">Scans everything above, then checks the entire canvas to find every component usage.</span>
-        </label>
-      </div>
+      <label class="radioButton depth-option" id="depth-opt-3">
+        <input class="radioButton-input" type="radio" name="scan-depth" id="depth-radio-3" value="3"/>
+        <span class="radioButton-circle"></span>
+        <span class="radioButton-content"><span class="radioButton-text">
+          <span class="radioButton-label">Full</span>
+          <span class="radioButton-description">Scans everything above, then checks the entire canvas to find every component usage.</span>
+        </span></span>
+      </label>
 
     </div>
     </div>
@@ -3729,6 +3597,19 @@ function updateSelectionState() {
   // Track direction so connector stagger delay applies correctly
   container.classList.toggle('lines-going-deeper', depth > prev && prev > 0);
   container.classList.toggle('lines-going-back',   depth < prev && depth > 0);
+  paintDepthStates(depth);
+}
+
+// Each depth's DS radio state: the chosen one Current, one it passes through or one not available Unselected
+// (the dot alone), any other Default (the empty ring).
+function paintDepthStates(depth) {
+  [1, 2, 3].forEach(function (d) {
+    var opt = document.getElementById('depth-opt-' + d);
+    if (!opt) return;
+    var unavailable = opt.classList.contains('unavailable');
+    opt.classList.toggle('radioButton--current', d === depth && !unavailable);
+    opt.classList.toggle('radioButton--unselected', unavailable || (depth > 0 && d < depth));
+  });
 }
 
 function updateApplyBtn() {
@@ -3758,8 +3639,6 @@ function openDeepScanModal() {
   var opt2 = document.getElementById('depth-opt-2');
   var opt3 = document.getElementById('depth-opt-3');
   if (opt2) opt2.classList.toggle('unavailable', !_hasExternalLibraries);
-  if (opt2) opt2.classList.toggle('done', _externalScanDone);
-  if (opt3) opt3.classList.toggle('done', _canvasScanDone);
 
   updateScanState();
   updateSelectionState();
