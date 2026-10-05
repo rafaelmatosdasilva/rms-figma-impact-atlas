@@ -5,6 +5,10 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 
 (Some earlier entries use decimals like `v5.1` for repo-only releases. That scheme was retired on 22 July 2026.)
 
+### Not released yet
+
+- The scan depth choice is built from the design system's radio, so it looks and behaves like every other radio in the design system.
+
 ### v6 · 1 August 2026
 
 - New feature: Place all components affected by a token on the canvas for easier review.
