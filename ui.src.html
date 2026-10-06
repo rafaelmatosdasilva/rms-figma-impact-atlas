@@ -37,14 +37,10 @@
 /* ─── Left panel ────────────────────────────────────────────────────────── */
 
 .left-panel {
+  /* The system's panel (.panel, Type=Primary) gives its surface, divider and slots; here only its place in the layout. */
   flex: 1;
   min-width: 120px;
-  border-right: var(--general-thickness) solid var(--panel-border);  /* panel/border/color (N700 both modes) */
-  background: var(--semantic-surface-elevationMedium);
-  position: relative;
   z-index: 5;
-  display: flex;
-  flex-direction: column;
   overflow-x: clip; /* clip horizontal overflow without affecting the scrollbar */
   overflow-y: visible;
 }
@@ -261,17 +257,13 @@ body.browser-empty .right-panel {
 
 
 .mode-toggle-row {
-  /* DS panel HeadContent slot: a SOLID background fill over the WHOLE header slot (segmented
-     control + the gap down to the first divider), so nothing behind shows through. The bottom
-     padding/l is that opaque gap — it moved here from the scroll area's top padding, which was
-     transparent and let list items bleed above the sticky divider. Dividers are compact (0 top
-     padding) so this no longer stacks into an over-tall divider. Locked by RENDERED_ASSERTIONS. */
-  padding: var(--padding-l) var(--padding-l) var(--padding-l) var(--padding-l);
-  flex-shrink: 0;
+  /* The system's panel Head Content (.panel-head) gives its padding/l top and sides and its solid fill. Its
+     bottom is padding/l here, not padding/s: that opaque gap keeps list items from bleeding above the sticky
+     divider below it. Locked by RENDERED_ASSERTIONS. */
+  padding-bottom: var(--padding-l);
   position: relative;
   isolation: isolate;
   z-index: 7;
-  background: var(--semantic-surface-elevationMedium);
 }
 
 /* segmented-control tab-empty state moved to theme.css (base-first) */
@@ -762,9 +754,9 @@ body.browser-empty .right-panel {
   <div class="plugin-layout">
 
     <!-- ═══════════════════════════════════════════ LEFT PANEL: VAR LIST -->
-    <div class="left-panel">
+    <div class="panel left-panel">
 
-      <div class="mode-toggle-row">
+      <div class="panel-head mode-toggle-row">
         <div class="segmented-control full-width" id="browser-mode-toggle">
           <span class="seg-pill" aria-hidden="true"></span>
           <button id="btn-mode-tokens" class="selected"><svg width="16" height="16"><use href="#icon-variable"/></svg><span class="tab-label">Tokens</span></button>
