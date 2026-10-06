@@ -11,6 +11,7 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 - Every button that shows only an icon now has a name screen readers announce (Change scan type, Rescan, Focus on canvas, Copy report to clipboard, Graph view, List view, Place affected components on canvas), not only a tooltip.
 - The tokens and components list is the design system's panel.
 - Token and component names in the lists use the design system's line height, as in the design.
+- A screen reader now announces the scan depth (Local, Extended or Full Scan) when it changes.
 
 ### v6 · 1 August 2026
 
