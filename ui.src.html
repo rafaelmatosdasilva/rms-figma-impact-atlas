@@ -37,8 +37,9 @@
 /* ─── Left panel ────────────────────────────────────────────────────────── */
 
 .left-panel {
-  /* The system's panel (.panel, Type=Primary) gives its surface, divider and slots; here only its place in the layout. */
-  flex: 1;
+  /* The system's panel (.panel, Type=Primary) gives its surface, padding, divider and slots; here only its place in
+     the layout: a third of the row, its padding inside that third. */
+  flex: 0 0 calc(100% / 3);
   min-width: 120px;
   z-index: 5;
   overflow-x: clip; /* clip horizontal overflow without affecting the scrollbar */
@@ -161,7 +162,7 @@
   min-width: 0;
   font-size: var(--typography-m-font-size);
   color: inherit; /* node label color comes from the .node state classes (node/label/* tokens) */
-  line-height: 1.4;
+  line-height: var(--typography-m-line-height); /* the m text style, as Figma's node label */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -255,6 +256,9 @@ body.browser-empty .right-panel {
   transition: top 0.18s ease;
 }
 
+
+/* The lists reach the panel's edges (past its padding/l); each one scrolls and pads itself. */
+#browser-body { margin: 0 calc(-1 * var(--padding-l)); }
 
 .mode-toggle-row {
   /* The system's panel Head Content (.panel-head) gives its padding/l top and sides and its solid fill. Its
@@ -411,7 +415,7 @@ body.browser-empty .right-panel {
                      name truncates instead of overflowing into the chevron */
   font-size: var(--typography-m-font-size);
   color: inherit; /* node label color comes from the .node state classes (node/label/* tokens) */
-  line-height: 1.4;
+  line-height: var(--typography-m-line-height); /* the m text style, as Figma's node label */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
