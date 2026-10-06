@@ -736,7 +736,7 @@ body.browser-empty .right-panel {
   <!-- ═══════════════════════ TOP ACTIONBAR -->
   <div class="actionbar actionbar-split">
     <div id="canvas-scan-btn" class="scan-status-row">
-      <button class="buttonTertiary scan-status-change icon-only" id="scan-status-change-btn" title="Change scan type">
+      <button class="buttonTertiary scan-status-change icon-only" id="scan-status-change-btn" title="Change scan type" aria-label="Change scan type">
         <svg width="16" height="16"><use href="#icon-settings"/></svg>
       </button>
       <span class="scan-status-label" id="scan-status-level">Local Scan</span>
@@ -752,7 +752,7 @@ body.browser-empty .right-panel {
 
     <div id="last-scan-bar" class="last-scan-row hidden">
       <span class="scan-age-text">Scanned <span id="scan-age-label">—</span></span>
-      <button id="rescan-btn" class="buttonTertiary buttonRescan" title="Rescan">
+      <button id="rescan-btn" class="buttonTertiary buttonRescan" title="Rescan" aria-label="Rescan">
         <svg width="16" height="16"><use href="#icon-update"/></svg>
       </button>
     </div>
@@ -818,21 +818,21 @@ body.browser-empty .right-panel {
             </div>
             <span id="sb-impact" class="badge"></span>
             <span id="sb-canvas-count" class="var-canvas-count hidden"></span>
-            <button id="sb-focus-btn" class="buttonTertiary hidden" data-tip="Focus on canvas">
+            <button id="sb-focus-btn" class="buttonTertiary hidden" data-tip="Focus on canvas" aria-label="Focus on canvas">
               <svg width="16" height="16"><use href="#icon-focus"/></svg>
             </button>
             <span id="sb-lib-badge" class="tooltipButton sb-lib-badge hidden" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>
             </div>
             <div class="statusBar-content">
-            <button id="sb-export-btn" class="buttonQuaternary" data-tip="Copy report to clipboard">
+            <button id="sb-export-btn" class="buttonQuaternary" data-tip="Copy report to clipboard" aria-label="Copy report to clipboard">
               <svg width="16" height="16"><use href="#icon-copy"/></svg>
             </button>
             <div class="segmented-control" id="view-mode-toggle" style="flex-shrink:0;">
               <span class="seg-pill" aria-hidden="true"></span>
-              <button id="btn-view-graph" class="selected" title="Graph view">
+              <button id="btn-view-graph" class="selected" title="Graph view" aria-label="Graph view">
                 <svg width="16" height="16"><use href="#icon-tree"/></svg>
               </button>
-              <button id="btn-view-list" title="List view">
+              <button id="btn-view-list" title="List view" aria-label="List view">
                 <svg width="16" height="16"><use href="#icon-list"/></svg>
               </button>
             </div>
@@ -847,7 +847,7 @@ body.browser-empty .right-panel {
             <!-- Single full-width header row spanning both columns -->
             <div id="graph-col-headers">
               <div class="dividerSection" id="gcol-2-lbl-wrap"><div class="dividerSection-content"><span id="gcol-2-lbl">Alias tokens</span><span class="div-sep">·</span><span class="count" id="gcol-2-count"></span></div></div>
-              <div class="dividerSection" id="gcol-3-lbl-wrap"><div class="dividerSection-content">Affected components<span class="div-sep">·</span><span class="count" id="gcol-3-count"></span></div><button class="dividerSection-action buttonSecondary place-action-btn" data-tip="Place affected components on canvas"><svg width="16" height="16"><use href="#icon-fit"/></svg></button></div>
+              <div class="dividerSection" id="gcol-3-lbl-wrap"><div class="dividerSection-content">Affected components<span class="div-sep">·</span><span class="count" id="gcol-3-count"></span></div><button class="dividerSection-action buttonSecondary place-action-btn" data-tip="Place affected components on canvas" aria-label="Place affected components on canvas"><svg width="16" height="16"><use href="#icon-fit"/></svg></button></div>
             </div>
             <div id="graph-cols">
               <div class="graph-col-wrap" id="gcol-2-wrap">
@@ -2368,7 +2368,7 @@ function renderListComponents(components) {
       // Focus only for local components — a library master lives in another file
       // and can't be navigated to. Library components get a muted indicator instead.
       ((c.pageId && !_unreachableNodes.has(c.nodeId))
-        ? '<button class="buttonList-action buttonTertiary" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas" tabindex="-1"><svg width="16" height="16"><use href="#icon-focus"/></svg></button>'
+        ? '<button class="buttonList-action buttonTertiary" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas" aria-label="Focus on canvas" tabindex="-1"><svg width="16" height="16"><use href="#icon-focus"/></svg></button>'
         : '<span class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>') +
       '<svg width="16" height="16" class="buttonList-arrow"><use href="#icon-arrow-right"/></svg>' +
     '</div>';
@@ -3756,7 +3756,7 @@ var _placing = false;
 // list header). The list header is re-rendered on every selection, so bind via
 // delegation rather than to a specific element.
 function placeActionBtnHtml() {
-  return '<button class="dividerSection-action buttonSecondary place-action-btn" data-tip="Place affected components on canvas"><svg width="16" height="16"><use href="#icon-fit"/></svg></button>';
+  return '<button class="dividerSection-action buttonSecondary place-action-btn" data-tip="Place affected components on canvas" aria-label="Place affected components on canvas"><svg width="16" height="16"><use href="#icon-fit"/></svg></button>';
 }
 
 function startPlace() {
