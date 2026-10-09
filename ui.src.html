@@ -753,7 +753,7 @@ body.browser-empty .right-panel {
       </button>
     </div>
   </div>
-  <div class="dividerLine"></div>
+  <div class="dividerLine" role="separator"></div>
 
   <div class="plugin-layout">
 
@@ -761,7 +761,7 @@ body.browser-empty .right-panel {
     <div class="panel left-panel">
 
       <div class="panel-head mode-toggle-row">
-        <div class="segmented-control full-width" id="browser-mode-toggle">
+        <div class="segmented-control full-width" id="browser-mode-toggle" aria-label="Browse">
           <span class="seg-pill" aria-hidden="true"></span>
           <button id="btn-mode-tokens" class="selected"><svg width="16" height="16"><use href="#icon-variable"/></svg><span class="tab-label">Tokens</span></button>
           <button id="btn-mode-comps"><svg width="16" height="16"><use href="#icon-object-component"/></svg><span class="tab-label">Components</span></button>
@@ -794,7 +794,7 @@ body.browser-empty .right-panel {
     <div class="right-panel">
 
       <!-- Placeholder: no var selected -->
-      <div id="right-placeholder" class="empty-state">
+      <div id="right-placeholder" class="empty-state" role="group" aria-labelledby="right-placeholder-text">
         <div class="empty-state-content">
           <svg width="56" height="56"><use href="#icon-empty-token" id="right-placeholder-icon"/></svg>
           <p id="right-placeholder-text">Select an item<br>to see what it affects.</p>
@@ -817,13 +817,13 @@ body.browser-empty .right-panel {
             <button id="sb-focus-btn" class="buttonTertiary hidden" data-tip="Focus on canvas" aria-label="Focus on canvas">
               <svg width="16" height="16"><use href="#icon-focus"/></svg>
             </button>
-            <span id="sb-lib-badge" class="tooltipButton sb-lib-badge hidden" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>
+            <button type="button" id="sb-lib-badge" class="tooltipButton sb-lib-badge hidden" data-tip="From an external library. No canvas focus." aria-label="From an external library. No canvas focus."><svg width="12" height="12" aria-hidden="true"><use href="#icon-library"/></svg></button>
             </div>
             <div class="statusBar-content">
             <button id="sb-export-btn" class="buttonQuaternary" data-tip="Copy report to clipboard" aria-label="Copy report to clipboard">
               <svg width="16" height="16"><use href="#icon-copy"/></svg>
             </button>
-            <div class="segmented-control" id="view-mode-toggle" style="flex-shrink:0;">
+            <div class="segmented-control" id="view-mode-toggle" aria-label="View" style="flex-shrink:0;">
               <span class="seg-pill" aria-hidden="true"></span>
               <button id="btn-view-graph" class="selected" title="Graph view" aria-label="Graph view">
                 <svg width="16" height="16"><use href="#icon-tree"/></svg>
@@ -908,8 +908,8 @@ body.browser-empty .right-panel {
 <!-- Depth Selector Modal -->
 <div id="deep-scan-modal" class="modal">
   <div class="modal-overlay"></div>
-  <div class="modal-card">
-    <h2 class="modal-title">Choose scan type</h2>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deep-scan-title">
+    <h2 class="modal-title" id="deep-scan-title">Choose scan type</h2>
 
     <div class="modal-slot">
     <div class="depth-options">
@@ -1701,7 +1701,7 @@ function nodeLabelName(name) {
 // A component the backend marked focusable turned out to be unreachable (external).
 // Record it so every future render shows a library badge, and patch the rows already
 // on screen without a full re-render — swap each focus control for the library badge.
-var LIB_BADGE_HTML = '<span class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>';
+var LIB_BADGE_HTML = '<button type="button" class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus." aria-label="From an external library. No canvas focus."><svg width="12" height="12" aria-hidden="true"><use href="#icon-library"/></svg></button>';
 function markNodeUnreachable(nodeId) {
   if (!nodeId || _unreachableNodes.has(nodeId)) return;
   _unreachableNodes.add(nodeId);
@@ -2365,7 +2365,7 @@ function renderListComponents(components) {
       // and can't be navigated to. Library components get a muted indicator instead.
       ((c.pageId && !_unreachableNodes.has(c.nodeId))
         ? '<button class="buttonList-action buttonTertiary" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas" aria-label="Focus on canvas" tabindex="-1"><svg width="16" height="16"><use href="#icon-focus"/></svg></button>'
-        : '<span class="tooltipButton lib-badge" data-tip="From an external library. No canvas focus."><svg width="12" height="12"><use href="#icon-library"/></svg></span>') +
+        : LIB_BADGE_HTML) +
       '<svg width="16" height="16" class="buttonList-arrow"><use href="#icon-arrow-right"/></svg>' +
     '</div>';
   }
@@ -2684,7 +2684,7 @@ function renderComponentBrowser() {
   if (!compList) return;
 
   if (!_compBrowserLoaded) {
-    compList.innerHTML = '<div class="empty-state"><div class="empty-state-content"><p>Component data loads with init.<br>Run a Usage Scan to add instance counts.</p></div></div>';
+    compList.innerHTML = '<div class="empty-state" role="group" aria-labelledby="comp-empty-text"><div class="empty-state-content"><p id="comp-empty-text">Component data loads with init.<br>Run a Usage Scan to add instance counts.</p></div></div>';
     return;
   }
 
