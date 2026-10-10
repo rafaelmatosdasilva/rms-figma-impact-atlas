@@ -479,9 +479,6 @@ body.browser-empty .right-panel {
   text-overflow: ellipsis;
 }
 
-.lrow-name:has(+ .lib-badge) { margin-right: 0; }
-.lrow-name + .lib-badge { margin-right: auto; }
-
 /* ─── External var detail (library) ────────────────────────────────────── */
 
 
@@ -2311,7 +2308,7 @@ function renderListView(chain) {
       var d = descs[di];
       aliasHtml += '<div class="buttonList" data-id="' + esc(d.id) + '">' +
         '<div class="lrow-icon">' + varTypeIconHtml(d.resolvedType, 16) + '</div>' +
-        '<span class="lrow-name">' + esc(nodeLabelName(d.name)) + '</span>' +
+        '<button type="button" class="buttonList-main"><span class="lrow-name">' + esc(nodeLabelName(d.name)) + '</span></button>' +
         '<svg width="16" height="16" class="buttonList-arrow"><use href="#icon-arrow-right"/></svg>' +
       '</div>';
     }
@@ -2366,11 +2363,11 @@ function renderListComponents(components) {
     var c = sorted[i];
     html += '<div class="buttonList" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '">' +
       '<div class="lrow-icon">' + nodeTypeIcon(c.nodeType) + '</div>' +
-      '<span class="lrow-name">' + esc(c.nodeName) + '</span>' +
+      '<button type="button" class="buttonList-main"><span class="lrow-name">' + esc(c.nodeName) + '</span></button>' +
       // Focus only for local components — a library master lives in another file
       // and can't be navigated to. Library components get a muted indicator instead.
       ((c.pageId && !_unreachableNodes.has(c.nodeId))
-        ? '<button class="buttonList-action buttonTertiary" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas" aria-label="Focus on canvas" tabindex="-1"><svg width="16" height="16"><use href="#icon-focus"/></svg></button>'
+        ? '<button class="buttonList-action buttonTertiary" data-node-id="' + esc(c.nodeId) + '" data-page-id="' + esc(c.pageId) + '" data-tip="Focus on canvas" aria-label="Focus on canvas"><svg width="16" height="16"><use href="#icon-focus"/></svg></button>'
         : LIB_BADGE_HTML) +
       '<svg width="16" height="16" class="buttonList-arrow"><use href="#icon-arrow-right"/></svg>' +
     '</div>';
@@ -2945,7 +2942,7 @@ function renderListComponentDetail(comp) {
     var v = vars[i];
     html += '<div class="buttonList" data-id="' + esc(v.id) + '">' +
       '<div class="lrow-icon">' + varTypeIconHtml(v.resolvedType, 16) + '</div>' +
-      '<span class="lrow-name">' + esc(nodeLabelName(v.name)) + '</span>' +
+      '<button type="button" class="buttonList-main"><span class="lrow-name">' + esc(nodeLabelName(v.name)) + '</span></button>' +
       '<svg width="16" height="16" class="buttonList-arrow"><use href="#icon-arrow-right"/></svg>' +
     '</div>';
   }
@@ -3627,7 +3624,6 @@ function updateApplyBtn() {
 function openDeepScanModal() {
   var modal = document.getElementById('deep-scan-modal');
   if (!modal) return;
-  if (_closeModalTimer) { clearTimeout(_closeModalTimer); _closeModalTimer = null; modal.classList.remove('is-closing'); }
 
   // Pre-select current display depth; fall back to completed; retry cancelled scan if deeper
   var completed = currentCompletedDepth();
@@ -3645,25 +3641,21 @@ function openDeepScanModal() {
   updateScanState();
   updateSelectionState();
   updateApplyBtn();
-  modal.classList.add('is-open');
+  // The system's modal: it takes the focus (the chosen depth) and keeps it, and Escape or the overlay close it.
+  openModal(modal, { onClose: resetDeepScanDepth });
 }
 
-var _closeModalTimer = null;
+// Once closed, the radios go back to the current display depth so the next open is always clean.
+function resetDeepScanDepth() {
+  var container = document.querySelector('.depth-options');
+  if (container) container.removeAttribute('data-depth');
+  document.querySelectorAll('input[name="scan-depth"]').forEach(function (r) { r.checked = false; });
+  var radio = document.getElementById('depth-radio-' + _displayDepth);
+  if (radio) radio.checked = true;
+}
 
 function closeDeepScanModal() {
-  var modal = document.getElementById('deep-scan-modal');
-  if (!modal) return;
-  modal.classList.add('is-closing');
-  _closeModalTimer = setTimeout(function () {
-    modal.classList.remove('is-open', 'is-closing');
-    _closeModalTimer = null;
-    // Reset radios back to current display depth so next open is always clean
-    var container = document.querySelector('.depth-options');
-    if (container) container.removeAttribute('data-depth');
-    document.querySelectorAll('input[name="scan-depth"]').forEach(function (r) { r.checked = false; });
-    var radio = document.getElementById('depth-radio-' + _displayDepth);
-    if (radio) radio.checked = true;
-  }, 160);
+  closeModal(document.getElementById('deep-scan-modal'));
 }
 
 document.getElementById('scan-status-change-btn').addEventListener('click', function (e) {
@@ -3702,8 +3694,6 @@ document.getElementById('modal-confirm-btn').addEventListener('click', function 
   if (radio) radio.addEventListener('change', function () { updateSelectionState(); updateApplyBtn(); });
 });
 
-
-document.getElementById('deep-scan-modal').querySelector('.modal-overlay').addEventListener('click', closeDeepScanModal);
 
 
 // ─── Place on canvas ─────────────────────────────────────────────────────────

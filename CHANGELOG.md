@@ -12,6 +12,8 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 - The tokens and components list is the design system's panel.
 - Token and component names in the lists use the design system's line height, as in the design.
 - A screen reader now announces the scan depth (Local, Extended or Full Scan) when it changes.
+- The token and component lists work from the keyboard: Tab reaches each row and its Focus on canvas button, and Enter or Space opens the row.
+- The scan type window keeps the keyboard inside it while it is open, closes with Escape, and gives the focus back to the button that opened it.
 
 ### v6 · 1 August 2026
 
