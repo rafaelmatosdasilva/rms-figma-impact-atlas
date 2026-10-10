@@ -7,6 +7,7 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 
 ### Not released yet
 
+- While it reads the document and indexes components, Impact Atlas shows the design system's loader, its spinner and its words, and a screen reader announces it.
 - The scan depth choice is built from the design system's radio, so it looks and behaves like every other radio in the design system.
 - Every button that shows only an icon now has a name screen readers announce (Change scan type, Rescan, Focus on canvas, Copy report to clipboard, Graph view, List view, Place affected components on canvas), not only a tooltip.
 - The tokens and components list is the design system's panel.
