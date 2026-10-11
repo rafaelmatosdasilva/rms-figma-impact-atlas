@@ -620,18 +620,6 @@ body.browser-empty .right-panel {
 .scan-status-change { height: var(--button-min-height); padding: 0 var(--padding-s); font-size: var(--typography-m-font-size); flex-shrink: 0; }
 .scan-status-change.icon-only { padding: 0 var(--padding-xs); display: inline-flex; align-items: center; justify-content: center; }
 
-#canvas-scan-bar {
-  padding: var(--padding-xs) var(--padding-m);
-  display: flex;
-  align-items: center;
-  gap: var(--gap-m);
-  font-size: var(--typography-s-font-size);
-  color: var(--text-muted);
-  border-bottom: var(--general-thickness) solid var(--dividerLine-border);  /* dividerLine (N700 both modes) */
-  flex-shrink: 0;
-}
-#canvas-scan-bar .spinner { width: 14px; height: 14px; border-width: var(--general-thickness); flex-shrink: 0; }
-
 /* canvas usage count on var-items */
 .var-canvas-count {
   flex-shrink: 0;
@@ -766,7 +754,6 @@ body.browser-empty .right-panel {
         </div>
       </div>
 
-      <div id="canvas-scan-bar" class="hidden"></div>
 
       <div id="browser-body" style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;">
         <div id="browser-loading" class="browser-loading hidden">
