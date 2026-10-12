@@ -7,6 +7,11 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 
 ### Not released yet
 
+- The bar at the top is laid out as in the design: the scan type on the left, the search in the middle, and when the file was last scanned with a Scan button on the right, on one line.
+- One line under the bar at the top, as in the design: the bar draws it, so the second line under it is gone.
+- The tokens list lines up with the design: the section headers and the rows sit inside the panel's padding, the first header 16px under the Tokens and Components switch, and the panel is 287px wide.
+- The area on the right is one surface behind the empty state, as in the design, not a band behind its text.
+- The Graph and List switch is as wide as the design system draws its two icons.
 - While it reads the document and indexes components, Impact Atlas shows the design system's loader, its spinner and its words, and a screen reader announces it.
 - The scan depth choice is built from the design system's radio, so it looks and behaves like every other radio in the design system.
 - Every button that shows only an icon now has a name screen readers announce (Change scan type, Rescan, Focus on canvas, Copy report to clipboard, Graph view, List view, Place affected components on canvas), not only a tooltip.
