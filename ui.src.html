@@ -52,8 +52,17 @@
 
 /* Search is the DS input (component 1:5): its Icon Left is the search icon and its Icon Right the clear button,
    shown only once there is a value. The field itself (border, padding, gap, text) comes from .inputWrap. */
+/* The action bar's Slot holds three groups, as Figma's does (Impact Atlas 308:10425): the scan type on the left, the
+   search in the middle, 320 wide, and the last scan with Scan on the right. The two sides are as wide as each other,
+   so the search sits in the middle, and the right one keeps its room before the first scan, so nothing moves. */
+.actionbar-split { flex-wrap: nowrap; gap: 0; }
+.actionbar-split > .scan-status-row,
+.actionbar-split > .last-scan-row { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: var(--gap-m); }
+.actionbar-split > .last-scan-row { justify-content: flex-end; }
+.actionbar-split > .last-scan-row.hidden { display: flex !important; visibility: hidden; }
+.scan-age-text { font-size: var(--typography-m-font-size); font-weight: var(--typography-m-font-weight); color: var(--text-muted); white-space: nowrap; }
 .search-wrap {
-  width: 344px;
+  width: 320px;
   flex-shrink: 0;
 }
 .search-clear {
@@ -731,9 +740,10 @@ body.browser-empty .right-panel {
     </div>
 
     <div id="last-scan-bar" class="last-scan-row hidden">
-      <span class="scan-age-text">Scanned <span id="scan-age-label">—</span></span>
-      <button id="rescan-btn" class="buttonTertiary buttonRescan" title="Rescan" aria-label="Rescan">
-        <svg width="16" height="16"><use href="#icon-update"/></svg>
+      <span class="scan-age-text" id="scan-age-label">—</span>
+      <button id="rescan-btn" class="buttonPrimary" title="Scan the file again">
+        <span>Scan</span>
+        <svg width="16" height="16" aria-hidden="true"><use href="#icon-update"/></svg>
       </button>
     </div>
   </div>
