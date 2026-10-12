@@ -38,9 +38,9 @@
 /* ─── Left panel ────────────────────────────────────────────────────────── */
 
 .left-panel {
-  /* The system's panel (.panel, Type=Primary) gives its surface, padding, divider and slots; here only its place in
-     the layout: a third of the row, its padding inside that third. */
-  flex: 0 0 calc(100% / 3);
+  /* The system's panel (.panel, Type=Primary) gives its surface, padding and slots; here only its place in the layout:
+     Figma's 287 at the plugin's 820, never more than 35% of a narrower window. */
+  flex: 0 0 min(287px, 35%);
   min-width: 120px;
   z-index: 5;
   overflow-x: clip; /* clip horizontal overflow without affecting the scrollbar */
@@ -86,7 +86,9 @@
      padding/l gap above the first divider AND fills it opaquely, so the sticky divider sits flush
      at top:0 with no transparent strip for list items to bleed through. (A top padding here put the
      16px gap INSIDE the scroll area, above the sticky divider, where scrolling items showed through.) */
-  padding: 0 var(--padding-s) var(--padding-l) var(--padding-m);
+  /* The panel's padding/l on both sides, as Figma insets every row: the right is padding/xs beside the 12px the
+     scrollbar keeps, 16 in all. */
+  padding: 0 var(--padding-xs) var(--padding-l) var(--padding-l);
   margin: 0; /* cancel base -16px margin — this layout uses its own padding */
   position: relative;
   scrollbar-gutter: stable; /* always reserve 8px for scrollbar so content never shifts */
@@ -212,15 +214,13 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--semantic-surface-elevationLow); /* Figma's Content frame: one surface behind the empty state and the results */
 }
 body.browser-empty .right-panel {
   display: none;
 }
 
-/* #right-placeholder uses .empty-state base class */
-#right-placeholder {
-  background: var(--semantic-surface-elevationLow);
-}
+/* #right-placeholder uses .empty-state base class: the system's 260 column, no surface of its own. */
 
 #right-detail {
   display: flex;
@@ -239,15 +239,14 @@ body.browser-empty .right-panel {
   position: sticky;
   top: 0;
   height: 24px; /* DS dividerSection h — compact (2026-09-09); fixed so Gate [16] can assert it in hidden views */
-  margin-left: -12px;
-  margin-right: -8px;
-  padding-left: var(--padding-m);
-  padding-right: var(--padding-s);
+  /* In line with the rows, inside the panel's padding, as Figma lays out each section's header. */
   margin-top: var(--gap-m);
   margin-bottom: var(--gap-m);
   z-index: 7;
   isolation: isolate;
 }
+/* The first header sits gap/xl below the switch above it: the header slot's own padding/l is that gap. */
+.scroll-area > .dividerSection:first-child { margin-top: 0; }
 /* Detail list view: DS 308-7820 composes each group as an independent panel (type=secondary).
    Each group's header carries the panel HeadContent spacing — padding/l (16) above, padding/s (8)
    below — and the gap between groups is the next header's top margin (gap/xl = padding/l = 16).
@@ -280,9 +279,9 @@ body.browser-empty .right-panel {
 
 /* segmented-control tab-empty state moved to theme.css (base-first) */
 /* .segmented-control + its .full-width variant now live in the base DS. */
-/* View-mode toggle: equal fixed width, icon stays centred — gap must stay 0 */
+/* View-mode toggle: two icon segments as the system draws them (Figma's 81 wide), icon centred, gap 0 */
 #view-mode-toggle button,
-#view-mode-toggle button.selected { width: 52px; flex-shrink: 0; justify-content: center; gap: 0; }
+#view-mode-toggle button.selected { flex-shrink: 0; justify-content: center; gap: 0; }
 
 /* Progress toast sizing — ensure content isn't clipped */
 
@@ -747,7 +746,6 @@ body.browser-empty .right-panel {
       </button>
     </div>
   </div>
-  <div class="dividerLine" role="separator"></div>
 
   <div class="plugin-layout">
 
