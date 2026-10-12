@@ -1075,6 +1075,9 @@ window.onmessage = function (event) {
       markNodeUnreachable(msg.nodeId);
       showToast('This component lives in an external library — it has no canvas location.');
       return;
+    case 'focus-variable-none':
+      showToast('No layer on this page uses this token.');
+      return;
     case 'error':             return onError(msg.message);
   }
 };
@@ -1573,8 +1576,10 @@ function onChainResult(chain, styles, components, impact) {
   });
 
   updateStatusBar(chain, _currentComponents !== null ? _currentComponents.length : null);
+  // A token nothing uses shows only the empty state that says so, with no status bar, as Figma has it.
+  var usedByNothing = !(chain.descendants || []).length && _currentComponents !== null && !_currentComponents.length;
   var sb = document.getElementById('status-bar');
-  if (sb) sb.classList.remove('hidden');
+  if (sb) sb.classList.toggle('hidden', usedByNothing);
   showRightPanel('detail');
 
   // When reached via drill/navigation the selected list row smooth-scrolls into
@@ -2195,7 +2200,7 @@ function switchView(mode) {
   if (btnGraph) btnGraph.classList.toggle('selected', isGraph);
   if (btnList)  btnList.classList.toggle('selected', !isGraph);
   updateSegPill(document.getElementById('view-mode-toggle'));
- 
+  syncTokenFocusBtn();
 
   if (isGraph) {
     scheduleDrawEdges();
@@ -2211,6 +2216,22 @@ function switchView(mode) {
 }
 
 // ─── Status bar ───────────────────────────────────────────────────────────────
+
+// View on Canvas for a token: in the list view, for a token of this file, it selects the layers on this page that use
+// it. A library token has no layers here to select, and the graph view has none of it in Figma's screens.
+function syncTokenFocusBtn() {
+  if (_detailMode !== 'variable') return;
+  var focusBtn = document.getElementById('sb-focus-btn');
+  if (!focusBtn) return;
+  var show = _viewMode === 'list' && !!_selectedId && !_selectedRemoteId;
+  focusBtn.removeAttribute('data-node-id');
+  focusBtn.removeAttribute('data-page-id');
+  if (show) focusBtn.setAttribute('data-variable-id', _selectedId);
+  else focusBtn.removeAttribute('data-variable-id');
+  focusBtn.setAttribute('data-tip', 'View on Canvas');
+  focusBtn.setAttribute('aria-label', 'View on Canvas');
+  focusBtn.classList.toggle('hidden', !show);
+}
 
 
 function updateStatusBar(chain, compCount) {
@@ -2239,9 +2260,8 @@ function updateStatusBar(chain, compCount) {
   var ccEl = document.getElementById('sb-canvas-count');
   if (ccEl) ccEl.classList.add('hidden');
 
-  // Focus is component-only, so always hide it for a variable.
-  var focusBtn = document.getElementById('sb-focus-btn');
-  if (focusBtn) focusBtn.classList.add('hidden');
+  // View on Canvas for a token shows in the list view only, for a token of this file, as Figma has it.
+  syncTokenFocusBtn();
   // Library indicator: show it for a token that comes from an external library,
   // matching the list rows and the component header.
   var sbLib = document.getElementById('sb-lib-badge');
@@ -2859,6 +2879,9 @@ function renderComponentDetail(comp) {
   var isLibComp = comp.isRemote === true || !comp.pageId;
   var focusBtn = document.getElementById('sb-focus-btn');
   if (focusBtn) {
+    focusBtn.removeAttribute('data-variable-id');
+    focusBtn.setAttribute('data-tip', 'Focus on canvas');
+    focusBtn.setAttribute('aria-label', 'Focus on canvas');
     if (comp.nodeId && !isLibComp) {
       focusBtn.setAttribute('data-node-id', comp.nodeId);
       focusBtn.setAttribute('data-page-id', comp.pageId);
@@ -3035,50 +3058,14 @@ function onCanvasScanProgress(pct) {
   showScanProgress(scanLabel + pct + '%', _scanEtaShown ? (eta || '…') : '');
 }
 
-// label format: "Some text… 42%" — we split at the last space before the pct
-function _splitLabelPct(label) {
-  var m = label.match(/^(.*?)\s+(\d+%)$/);
-  return m ? { text: m[1], pct: m[2] } : { text: label, pct: '' };
-}
-
+// The scan's progress is the system's loader in its overlay (showProgress): the step and its percent as the title,
+// the time left as the description, and Cancel.
 function showScanProgress(label, eta, onCancel) {
-  var cont = document.getElementById('progress-container');
-  if (!cont) return;
-  var parts = _splitLabelPct(label);
-  var existing = cont.querySelector('.progress-msg');
-  if (existing) {
-    var textEl  = existing.querySelector('.scan-text');
-    var pctEl   = existing.querySelector('.scan-pct');
-    var etaEl   = existing.querySelector('.scan-eta');
-    var hasEta  = !!(eta && eta.length);
-    if (textEl) textEl.textContent = parts.text;
-    if (pctEl) {
-      pctEl.textContent = parts.pct;
-      pctEl.classList.toggle('pct-visible', !!(parts.pct && parts.pct !== '0%'));
-    }
-    if (etaEl)  etaEl.textContent  = eta || '';
-    existing.classList.toggle('has-eta', hasEta);
-    return;
-  }
-  cont.innerHTML =
-    '<div class="progress-msg progress-msg--scan">' +
-      '<div class="toast-content">' +
-        '<div class="toast-spinner"></div>' +
-        '<div class="scan-info">' +
-          '<span class="scan-label"><span class="scan-text">' + parts.text + '</span> <span class="scan-pct">' + parts.pct + '</span></span>' +
-          '<span class="scan-eta">' + (eta || '') + '</span>' +
-        '</div>' +
-      '</div>' +
-      '<button class="buttonTertiary" id="scan-cancel-btn"><span>Cancel</span></button>' +
-    '</div>';
-  var cancelBtn = document.getElementById('scan-cancel-btn');
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', function () {
-      var c = document.getElementById('progress-container');
-      if (c) c.innerHTML = '';
-      if (typeof onCancel === 'function') onCancel();
-    });
-  }
+  // A percent shows once there is one: "Full scan… 0%" reads as "Full scan…".
+  showProgress(String(label).replace(/\s+0%$/, ''), { description: eta || '', cancel: function () {
+    dismissProgress();
+    if (typeof onCancel === 'function') onCancel();
+  } });
 }
 
 function onCanvasScanCancelled() {
@@ -3476,6 +3463,11 @@ function triggerCanvasScan(depth) {
 document.getElementById('sb-focus-btn').addEventListener('click', function (e) {
   e.stopPropagation();
   var btn = e.currentTarget;
+  var variableId = btn.getAttribute('data-variable-id');
+  if (variableId) {
+    parent.postMessage({ pluginMessage: { type: 'focus-variable', variableId: variableId } }, '*');
+    return;
+  }
   var nodeId = btn.getAttribute('data-node-id');
   var pageId = btn.getAttribute('data-page-id');
   if (!nodeId) return;

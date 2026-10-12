@@ -1545,6 +1545,23 @@ async function handleFocusNode(nodeId, pageId) {
   if (!r.ok) figma.ui.postMessage({ type: 'focus-unavailable', nodeId: nodeId });
 }
 
+// View on Canvas for a token: selects the layers on this page that use it and brings them into view. None on this
+// page is said in the UI instead of doing nothing.
+const MAX_FOCUS_LAYERS = 500;
+async function handleFocusVariable(variableId) {
+  const hits = [];
+  let nodes = [];
+  try { nodes = figma.currentPage.findAllWithCriteria({ types: BINDING_TYPES }); } catch (_) {}
+  for (let i = 0; i < nodes.length && hits.length < MAX_FOCUS_LAYERS; i++) {
+    const ids = new Set();
+    collectNodeVarIds(nodes[i], ids);
+    if (ids.has(variableId)) hits.push(nodes[i]);
+  }
+  if (!hits.length) { figma.ui.postMessage({ type: 'focus-variable-none', variableId: variableId }); return; }
+  figma.currentPage.selection = hits;
+  figma.viewport.scrollAndZoomIntoView(hits);
+}
+
 // ─── Place affected components on canvas ──────────────────────────────────────
 // Builds an "audit board": one frame holding a live instance of every component
 // the selected token affects, so the impact can be reviewed side by side before
@@ -2345,6 +2362,7 @@ figma.ui.onmessage = async (msg) => {
     case 'usage-scan-cancel':    _scanCancelled = true; return;
     case 'get-referenced-by':            return handleGetReferencedBy(msg.variableId);
     case 'focus-node':            return handleFocusNode(msg.nodeId, msg.pageId);
+    case 'focus-variable':        return handleFocusVariable(msg.variableId);
     case 'place-components':     _placeCancelled = false; return handlePlaceComponents(msg);
     case 'place-cancel':         _placeCancelled = true; return;
     case 'close':                 _initCancelled = true; _scanCancelled = true; _placeCancelled = true; return figma.closePlugin();

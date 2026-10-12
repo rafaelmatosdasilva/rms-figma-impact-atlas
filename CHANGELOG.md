@@ -7,6 +7,9 @@ A design system update is committed without a release (`build: ds-core vX.Y.Z`) 
 
 ### Not released yet
 
+- In the list view, View on Canvas sits beside a token's impact, as in the design: it selects the layers on the current page that use the token and brings them into view, or says none does.
+- A scan's progress is the design system's loader over the page, as in the design: the step and its percent, the time left under it, and Cancel.
+- A token nothing uses shows only the empty state that says so, with no bar above it, as in the design.
 - The bar at the top is laid out as in the design: the scan type on the left, the search in the middle, and when the file was last scanned with a Scan button on the right, on one line.
 - One line under the bar at the top, as in the design: the bar draws it, so the second line under it is gone.
 - The tokens list lines up with the design: the section headers and the rows sit inside the panel's padding, the first header 16px under the Tokens and Components switch, and the panel is 287px wide.
